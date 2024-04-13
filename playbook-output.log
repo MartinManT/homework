@@ -1,0 +1,112 @@
+ansible-playbook ansible-playbook.yaml -u root
+SSH password: 
+
+PLAY [Linux hostu konfigurācija] *************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ***********************************************************************************************************************************************************************
+ok: [hostname3]
+ok: [hostname4]
+ok: [hostname5]
+ok: [hostname2]
+ok: [hostname1]
+
+TASK [Pārbaude - vai ir sudo grupa?] *********************************************************************************************************************************************************
+ok: [hostname5]
+ok: [hostname4]
+ok: [hostname3]
+ok: [hostname2]
+ok: [hostname1]
+
+TASK [Uzstāda sudo pakotni] ******************************************************************************************************************************************************************
+changed: [hostname1]
+changed: [hostname2]
+changed: [hostname5]
+changed: [hostname4]
+changed: [hostname3]
+
+TASK [Pievieno lietotāju "rwadmin" ar sudo tiesībām] *****************************************************************************************************************************************
+changed: [hostname3]
+changed: [hostname5]
+changed: [hostname4]
+changed: [hostname2]
+changed: [hostname1]
+
+TASK [Pievieno rwadmin lietotāju sudoers failam] *********************************************************************************************************************************************
+changed: [hostname5]
+changed: [hostname3]
+changed: [hostname4]
+changed: [hostname1]
+changed: [hostname2]
+
+TASK [Uzstāda Chrony datuma/laika sinhronizāciju] ********************************************************************************************************************************************
+changed: [hostname5]
+changed: [hostname2]
+changed: [hostname1]
+changed: [hostname4]
+changed: [hostname3]
+
+TASK [Uzstāda Chrony NTP serveru sarakstu AAA datu centram] **********************************************************************************************************************************
+skipping: [hostname2]
+skipping: [hostname3]
+skipping: [hostname5]
+changed: [hostname1]
+changed: [hostname4]
+
+TASK [Uzstāda Chrony NTP serveru sarakstu ZZZ datu centram] **********************************************************************************************************************************
+skipping: [hostname1]
+skipping: [hostname4]
+changed: [hostname3]
+changed: [hostname2]
+changed: [hostname5]
+
+TASK [Restartē Chrony servisu] ***************************************************************************************************************************************************************
+changed: [hostname3]
+changed: [hostname5]
+changed: [hostname1]
+changed: [hostname4]
+changed: [hostname2]
+
+TASK [Uzstāda zabbix-agent2] *****************************************************************************************************************************************************************
+changed: [hostname4]
+changed: [hostname2]
+changed: [hostname5]
+changed: [hostname1]
+changed: [hostname3]
+
+TASK [Konfigurē zabbix-agent2] ***************************************************************************************************************************************************************
+changed: [hostname1] => (item={'regexp': '^Server=.*$', 'replace': 'Server=zabbix.company.tld'})
+changed: [hostname4] => (item={'regexp': '^Server=.*$', 'replace': 'Server=zabbix.company.tld'})
+changed: [hostname2] => (item={'regexp': '^Server=.*$', 'replace': 'Server=zabbix.company.tld'})
+changed: [hostname3] => (item={'regexp': '^Server=.*$', 'replace': 'Server=zabbix.company.tld'})
+changed: [hostname5] => (item={'regexp': '^Server=.*$', 'replace': 'Server=zabbix.company.tld'})
+changed: [hostname1] => (item={'regexp': '^ServerActive=.*$', 'replace': 'ServerActive=zabbix.company.tld'})
+changed: [hostname4] => (item={'regexp': '^ServerActive=.*$', 'replace': 'ServerActive=zabbix.company.tld'})
+changed: [hostname2] => (item={'regexp': '^ServerActive=.*$', 'replace': 'ServerActive=zabbix.company.tld'})
+changed: [hostname5] => (item={'regexp': '^ServerActive=.*$', 'replace': 'ServerActive=zabbix.company.tld'})
+changed: [hostname3] => (item={'regexp': '^ServerActive=.*$', 'replace': 'ServerActive=zabbix.company.tld'})
+changed: [hostname1] => (item={'regexp': '^Hostname=.*$', 'replace': 'Hostname=hostname1'})
+changed: [hostname5] => (item={'regexp': '^Hostname=.*$', 'replace': 'Hostname=hostname5'})
+changed: [hostname2] => (item={'regexp': '^Hostname=.*$', 'replace': 'Hostname=hostname2'})
+changed: [hostname4] => (item={'regexp': '^Hostname=.*$', 'replace': 'Hostname=hostname4'})
+changed: [hostname3] => (item={'regexp': '^Hostname=.*$', 'replace': 'Hostname=hostname3'})
+
+RUNNING HANDLER [Restartē chrony] ************************************************************************************************************************************************************
+changed: [hostname1]
+changed: [hostname3]
+changed: [hostname2]
+changed: [hostname4]
+changed: [hostname5]
+
+RUNNING HANDLER [Restartē zabbix-agent2] *****************************************************************************************************************************************************
+changed: [hostname1]
+changed: [hostname4]
+changed: [hostname2]
+changed: [hostname3]
+changed: [hostname5]
+
+PLAY RECAP ***********************************************************************************************************************************************************************************
+hostname1                  : ok=12   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+hostname2                  : ok=12   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+hostname3                  : ok=12   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+hostname4                  : ok=12   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+hostname5                  : ok=12   changed=10   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0 

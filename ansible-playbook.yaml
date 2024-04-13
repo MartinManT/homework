@@ -1,0 +1,91 @@
+---
+- name: Linux hostu konfigurācija
+  hosts: all
+  become: true
+  tasks:
+
+####### Lietotāja pievienošana (sudo tiesības)
+
+    - name: Pārbaude - vai ir sudo grupa?
+      group:
+        name: sudo
+        state: present
+
+    - name: Uzstāda sudo pakotni # distribūcijai ar kuru testēju šo playbook, pēc noklusējuma nav uzstādīta sudo pakotne
+      package:
+        name: sudo
+        state: present
+
+    - name: Pievieno lietotāju "rwadmin" ar sudo tiesībām
+      user:
+        name: rwadmin
+        shell: /bin/bash
+        groups: sudo
+        append: yes
+        state: present
+      register: rwadmin_user
+
+    - name: Pievieno rwadmin lietotāju sudoers failam
+      copy:
+        content: "rwadmin  ALL=(ALL:ALL) ALL\n"
+        dest: /etc/sudoers.d/rwadmin
+        mode: 0440
+
+####### NTP uzstādīšana
+
+    - name: Uzstāda Chrony datuma/laika sinhronizāciju
+      package:
+        name: chrony
+        state: present
+
+    - name: Uzstāda Chrony NTP serveru sarakstu AAA datu centram
+      replace:
+        path: /etc/chrony/chrony.conf
+        regexp: '^pool .* iburst$'
+        replace: 'pool time.AAA.tld iburst'
+      when: inventory_hostname in ['hostname1', 'hostname4'] # tā kā nav zināms, vai šie ir vienīgie hosti AAA datu centrā, neizmantojam hostu grupu, bet gan atlasām konkrētus hostus
+
+    - name: Uzstāda Chrony NTP serveru sarakstu ZZZ datu centram
+      replace:
+        path: /etc/chrony/chrony.conf
+        regexp: '^pool .* iburst$'
+        replace: 'pool time.ZZZ.tld iburst'
+      when: inventory_hostname in ['hostname2', 'hostname3', 'hostname5'] # tā kā nav zināms, vai šie ir vienīgie hosti ZZZ datu centrā, neizmantojam hostu grupu, bet gan atlasām konkrētus hostus
+
+    - name: Restartē Chrony servisu
+      service:
+        name: chrony
+        state: restarted
+      notify: Restartē chrony
+
+######## zabbix-agent2
+
+    - name: Uzstāda zabbix-agent2
+      package:
+        name: zabbix-agent2
+        state: present
+
+    - name: Konfigurē zabbix-agent2
+      replace:
+        path: /etc/zabbix/zabbix_agent2.conf
+        regexp: "{{ item.regexp }}"
+        replace: "{{ item.replace }}"
+      loop:
+       - { regexp: '^Server=.*$', replace: 'Server=zabbix.company.tld' }
+       - { regexp: '^ServerActive=.*$', replace: 'ServerActive=zabbix.company.tld' }
+       - { regexp: '^Hostname=.*$', replace: 'Hostname={{ ansible_hostname }}' }
+      notify: Restartē zabbix-agent2
+
+######## handleri  
+
+  handlers:
+    - name: Restartē chrony
+      service:
+        name: chrony
+        state: restarted
+
+    - name: Restartē zabbix-agent2
+      service:
+        name: zabbix-agent2
+        state: restarted
+

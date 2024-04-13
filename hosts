@@ -1,0 +1,14 @@
+hostname1
+hostname2
+hostname3
+hostname4
+hostname5
+
+[AAA]
+hostname1
+hostname4
+
+[ZZZ]
+hostname2
+hostname3
+hostname5
